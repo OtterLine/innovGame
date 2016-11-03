@@ -1,0 +1,68 @@
+body {
+    background-color: #CCCCCC;
+    font-family: 'Courier New';
+}
+
+#container{
+	border-radius: 50%;
+    width: 600px;
+    height: 600px;
+    background-color: #BBBBBB;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#container > div{
+	position: absolute;
+}
+
+#area{
+	border-radius: 50%;
+    width: 400px;
+    height: 400px;
+    background-color: #AAAAAA;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.player {
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background-color: #000000;
+}
+
+.food {
+    border-radius: 50%;
+    height: 8px;
+    width: 8px;
+    background-color: #FF0000;
+}
+
+.scores {
+    bottom: -60px;
+    width: 100%;
+    text-align: center;
+    background-color: #CCCCCC ! important;
+
+}
+
+.scores > div {
+    display: inline-block;
+    width: 49%;
+    color: #10FF00;
+    font-size: 2em;
+}
+
+.title {
+    top: -60px;
+    width: 100%;
+    text-align: center;
+    background-color: #CCCCCC ! important;
+    color: #000000;
+    font-size: 2em;
+}
