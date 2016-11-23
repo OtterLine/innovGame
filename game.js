@@ -154,7 +154,7 @@ var PLAYER_INIT_DIRECTION = 1; // Antitrigonometric
      },
 
      isDown_triggerOnce: function(keyCode) {
-	if this._pressed[keyCode] {
+	if (this._pressed[keyCode]) {
 	    delete this._pressed[keyCode];
 	    return True;
 	}
