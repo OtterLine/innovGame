@@ -202,16 +202,17 @@ Game.update = function () {
     for (i = 0; i < this.players.length; i++) {
         this.players[i].update();
     }
+
+    // Pop food
+    if (Math.random() > 0.95)
+        this.foods.push(new Food("container"));
+
     for (i = 0; i < this.foods.length; i++) {
         if (this.foods[i].update()) {
             this.foods.splice(i, 1);
             i--;
         }
     }
-
-    // Pop food
-    if (Math.random() > 0.95)
-        this.foods.push(new Food("container"));
 
     // Game over
     if (false) {
