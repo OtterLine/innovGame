@@ -74,8 +74,8 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
 
         if ((Key.isDown(this.up_key) || Key.isDown(this.down_key)) && !this.jumping) {
             this.jumping = true;
-            if (Key.isDown(this.down_key))    this.jumping_amplitude = -PLAYER_JUMPING_AMPLITUDE ;
-            else this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE;
+            if (Key.isDown(this.down_key))    this.jumping_amplitude = -PLAYER_JUMPING_AMPLITUDE/2;
+            else this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE/2;
         }
 
         if (this.jumping) {
