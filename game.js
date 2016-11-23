@@ -40,7 +40,7 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
     this.jumping = false;
     this.jumping_progress = 0;
     this.jumping_speed = PLAYER_JUMPING_SPEED;
-    this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE / 2;
+    this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE;
 
     this.size = this.div.clientHeight;
 
@@ -55,22 +55,22 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
 
         if ((Key.isDown(this.up_key) || Key.isDown(this.down_key)) && !this.jumping) {
             this.jumping = true;
-            if (Key.isDown(this.down_key))    this.jumping_amplitude = -PLAYER_JUMPING_AMPLITUDE / 2;
-            else this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE / 2;
+            if (Key.isDown(this.down_key))    this.jumping_amplitude = -PLAYER_JUMPING_AMPLITUDE ;
+            else this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE;
         }
 
         if (this.jumping) {
+	    // First, update jumping amplitude
+	    // Check if we ended the jump, if then, reset jump variables
             if (this.jumping_progress == 100) {
                 this.radius = PLAYER_INIT_RADIUS; // Just to be sure
                 this.jumping = false;
                 this.jumping_progress = 0;
-            } else if (this.jumping_progress >= 50) {
-                this.jumping_progress += this.jumping_speed;
-                this.radius -= 2 * this.jumping_amplitude * this.jumping_speed / 100;
             } else {
-                this.jumping_progress += this.jumping_speed;
-                this.radius += 2 * this.jumping_amplitude * this.jumping_speed / 100;
-            }
+		// Else, progress in speed, set new radisu as initial radius plus the sinus of the progress in radians times the amplitude.
+		this.jumping_progress += this.jumping_speed;
+		this.radius = PLAYER_INIT_RADIUS + this.jumping_amplitude*Math.sin(Math.PI*this.jumping_progress/100.0);
+	    }
         }
 
         this.angle += this.direction * this.angular_speed;
@@ -106,7 +106,13 @@ function Food(container_div_id) {
 
     this.size = FOOD_SIZE;
 
-    this.radius = PLAYER_INIT_RADIUS + (Math.random() - 0.5) * PLAYER_JUMPING_AMPLITUDE;
+    radius_random = (Math.random() - 0.5)*2; // Let's deduce the position from it
+    if (radius_random < 0) {
+	this.radius = PLAYER_INIT_RADIUS - radius_random * PLAYER_JUMPING_AMPLITUDE/2;
+    } else {
+	this.radius = PLAYER_INIT_RADIUS + radius_random * PLAYER_JUMPING_AMPLITUDE/2;
+    }
+    
     this.angle = Math.random() * 2 * Math.PI;
 
     this.x = this.radius * Math.cos(this.angle) + Game.w / 2 - this.size / 2;
@@ -114,7 +120,6 @@ function Food(container_div_id) {
 
     this.div.style.top = this.y + "px";
     this.div.style.left = this.x + "px";
-
 
     this.update = function () {
         // Check if some users has reached the ball
