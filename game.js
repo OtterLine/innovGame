@@ -6,8 +6,9 @@ var PLAYER_INIT_DIRECTION = 1; // Antitrigonometric
 var PLAYER_GROWING_SPEED = -0.001; // In PX per frame
 
 var PLAYER_JUMPING_SPEED = 1; // In perct per frame
-var PLAYER_JUMPING_AMPLITUDE = 100; // In PX
+var PLAYER_JUMPING_AMPLITUDE = 200; // In PX
 
+var FOOD_POP_PROBABILITY = 0.95; // In prct/frame
 var FOOD_SIZE = 8; // In PX
 var FOOD_TTL = 60 * 3; // In Frame
 
@@ -29,7 +30,7 @@ function randn_bm(mean, sigma) {
     var u = 1 - Math.random(); // Subtraction to flip [0, 1) to (0, 1].
     var v = 1 - Math.random();
     var x = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
-    return (x - mean)/sigma;
+    return x*sigma+mean;
 }
 
 function randn_bimodal(mean_1, sigma_1, mean_2, sigma_2) {
@@ -124,12 +125,9 @@ function Food(container_div_id) {
 
     this.size = FOOD_SIZE;
 
-    radius_random = (Math.random() - 0.5)*2; // Let's deduce the position from it
-    if (radius_random < 0) {
-	this.radius = PLAYER_INIT_RADIUS - radius_random * PLAYER_JUMPING_AMPLITUDE/2;
-    } else {
-	this.radius = PLAYER_INIT_RADIUS + radius_random * PLAYER_JUMPING_AMPLITUDE/2;
-    }
+    // Pop food, we need mean at middle of jump (thus init_radius + amplitude/4 and init_radius - amplitude/4)
+    // and we need 3sigma the half of a jump (thus 3sigma = amplitude/4)
+    this.radius = randn_bimodal(PLAYER_INIT_RADIUS + PLAYER_JUMPING_AMPLITUDE/4, PLAYER_JUMPING_AMPLITUDE/12, PLAYER_INIT_RADIUS - PLAYER_JUMPING_AMPLITUDE/4, PLAYER_JUMPING_AMPLITUDE/12);
     
     this.angle = Math.random() * 2 * Math.PI;
 
@@ -222,7 +220,7 @@ Game.update = function () {
     }
 
     // Pop food
-    if (Math.random() > 0.95)
+    if (Math.random() > FOOD_POP_PROBABILITY)
         this.foods.push(new Food("container"));
 
     for (i = 0; i < this.foods.length; i++) {
