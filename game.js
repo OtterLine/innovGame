@@ -35,6 +35,7 @@ var PLAYER_INIT_DIRECTION = 1; // Antitrigonometric
      this.radius = PLAYER_INIT_RADIUS;
      this.angular_speed = PLAYER_INIT_SPEED;
      this.direction = PLAYER_INIT_DIRECTION;
+     this.direction_holded = false;
 
      this.jumping = false;
      this.jumping_progress = 0;
@@ -48,7 +49,7 @@ var PLAYER_INIT_DIRECTION = 1; // Antitrigonometric
      this.flip_key = flip_key;
 
      this.update = function(){
-	 if (Key.isDown(this.flip_key)) this.direction *= -1;
+	 if (Key.isDown_triggerOnce(this.flip_key)) this.direction *= -1;
 	 
 	 if (this.size > PLAYER_INIT_SIZE) this.size += PLAYER_GROWING_SPEED;
 	 
@@ -150,6 +151,14 @@ var PLAYER_INIT_DIRECTION = 1; // Antitrigonometric
      
      isDown: function(keyCode) {
 	 return this._pressed[keyCode];
+     },
+
+     isDown_triggerOnce: function(keyCode) {
+	if this._pressed[keyCode] {
+	    delete this._pressed[keyCode];
+	    return True;
+	}
+	return False;
      },
      
      onKeydown: function(event) {
