@@ -24,6 +24,24 @@ function getRandomColor() {
     return color;
 }
 
+// Standard Normal variate using Box-Muller transform.
+function randn_bm(mean, sigma) {
+    var u = 1 - Math.random(); // Subtraction to flip [0, 1) to (0, 1].
+    var v = 1 - Math.random();
+    var x = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+    return (x - mean)/sigma;
+}
+
+function randn_bimodal(mean_1, sigma_1, mean_2, sigma_2) {
+    var u = Math.random();
+
+    if(u > 0.5) {
+	return randn_bm(mean_1, sigma_1);
+    }
+    return randn_bm(mean_2, sigma_2);
+}
+
+
 function Player(init_angle, div_id, up_key, down_key, flip_key) {
     this.div = document.getElementById(div_id);
 
