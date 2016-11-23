@@ -27,9 +27,12 @@ function getRandomColor() {
 
 function Player(init_angle, div_id, up_key, down_key, flip_key) {
     this.div = document.getElementById(div_id);
+    this.scoreDiv = document.getElementById("sco-" + div_id);
 
     this.x = 0;
     this.y = 0;
+
+    this.score = 0;
 
     this.angle = init_angle * Math.PI / 180;
 
@@ -105,6 +108,7 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
     };
 
     this.eat = function () {
+        this.score += 1;
         this.size += 2;
         this.speed -= 0.01;
     };
@@ -115,6 +119,8 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
         this.div.style.left = this.x + "px";
         this.div.style.height = this.size + "px";
         this.div.style.width = this.size + "px";
+
+        this.scoreDiv.innerHTML = this.score
     }
 }
 
