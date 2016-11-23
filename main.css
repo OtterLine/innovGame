@@ -1,6 +1,33 @@
 body {
     background-color: #CCCCCC;
-    font-family: 'Courier New';
+    font-family: 'Poiret One', cursive;
+}
+
+.title {
+    top: -60px;
+    width: 100%;
+    text-align: center;
+    background-color: #CCCCCC ! important;
+    color: #000000;
+    font-size: 3em;
+}
+
+#scores {
+    position: absolute;
+    width: 100%;
+    height: 20px;
+    bottom: 0;
+    font-size: 2em;
+}
+
+#sco-p1 {
+    position: absolute;
+    left: 0;
+}
+
+#sco-p2 {
+    position: absolute;
+    right: 0;
 }
 
 #container{
@@ -55,14 +82,5 @@ body {
     display: inline-block;
     width: 49%;
     color: #10FF00;
-    font-size: 2em;
-}
-
-.title {
-    top: -60px;
-    width: 100%;
-    text-align: center;
-    background-color: #CCCCCC ! important;
-    color: #000000;
     font-size: 2em;
 }
