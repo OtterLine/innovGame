@@ -12,7 +12,8 @@ var FOOD_SIZE = 8; // In PX
 var FOOD_TTL = 60 * 3; // In Frame
 
 Game = {
-    fps: 60
+    fps: 60,
+    isOver: false
 };
 
 function getRandomColor() {
@@ -48,6 +49,8 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
     this.down_key = down_key;
     this.flip_key = flip_key;
 
+    this.hasWon = false;
+
     this.update = function () {
         if (Key.isDown_triggerOnce(this.flip_key)) this.direction *= -1;
 
@@ -71,6 +74,27 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
 		this.jumping_progress += this.jumping_speed;
 		this.radius = PLAYER_INIT_RADIUS + this.jumping_amplitude*Math.sin(Math.PI*this.jumping_progress/100.0);
 	    }
+        }
+
+        for (j = 0; j < Game.players.length; j++) {
+            if (Game.players[j] == this) {
+                continue;
+            }
+
+            if (Game.players[j].size >= this.size) {
+                continue;
+            }
+            // Gather some coordinates
+            x_p = Game.players[j].x;
+            y_p = Game.players[j].y;
+            r_p = Game.players[j].size / 2;
+            r_f = this.size / 2;
+
+            if ((Math.abs(x_p + r_p - this.x - r_f) < r_p) && (Math.abs(y_p + r_p - this.y - r_f) < r_p)) {
+                // Players eat the food
+                this.hasWon = true;
+                Game.isOver = true;
+            }
         }
 
         this.angle += this.direction * this.angular_speed;
@@ -196,7 +220,7 @@ Game.reset = function () {
     for (i = 0; i < 10; i++) {
         this.foods.push(new Food("container"));
     }
-}
+};
 
 Game.update = function () {
     for (i = 0; i < this.players.length; i++) {
@@ -215,9 +239,16 @@ Game.update = function () {
     }
 
     // Game over
-    if (false) {
-        console.log("Palyer 1 Wins");
-        Game.reset();
+    if (this.isOver) {
+        for (i = 0; i < this.players.length; i++){
+            if (this.players[i].hasWon) {
+                console.log("Player " + (i + 1) +" Wins");
+                alert("Player " + (i + 1) +" Wins");
+                break
+            }
+        }
+        clearInterval(Game._intervalId);
+       // Game.reset();
     }
 };
 
