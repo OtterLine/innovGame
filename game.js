@@ -2,6 +2,7 @@
  var PLAYER_INIT_SIZE = 10; // In PX
  var PLAYER_INIT_RADIUS = 200;
  var PLAYER_INIT_SPEED = 0.01;
+var PLAYER_INIT_DIRECTION = 1; // Antitrigonometric
  var PLAYER_GROWING_SPEED = -0.001; // In PX per frame
  
  var PLAYER_JUMPING_SPEED = 1; // In perct per frame
@@ -23,7 +24,7 @@
      return color;
  }
  
- function Player(init_angle, div_id, up_key, down_key) {
+ function Player(init_angle, div_id, up_key, down_key, flip_key) {
      this.div = document.getElementById(div_id);
      
      this.x = 0;
@@ -33,6 +34,7 @@
 
      this.radius = PLAYER_INIT_RADIUS;
      this.angular_speed = PLAYER_INIT_SPEED;
+     this.direction = PLAYER_INIT_DIRECTION;
 
      this.jumping = false;
      this.jumping_progress = 0;
@@ -43,8 +45,11 @@
 
      this.up_key = up_key;
      this.down_key = down_key;
+     this.flip_key = flip_key;
 
      this.update = function(){
+	 if (Key.isDown(this.flip_key) this.direction *= -1;
+	 
 	 if (this.size > PLAYER_INIT_SIZE) this.size += PLAYER_GROWING_SPEED;
 	 
     	 if((Key.isDown(this.up_key) || Key.isDown(this.down_key)) && !this.jumping)	{
@@ -67,7 +72,7 @@
     	     }
     	 }
 
-    	 this.angle += this.angular_speed;
+    	 this.angle += this.direction*this.angular_speed;
 
     	 this.x = this.radius*Math.cos(this.angle) + Game.w/2 - this.size/2;
          this.y = this.radius*Math.sin(this.angle) + Game.h/2 - this.size/2;
@@ -137,6 +142,8 @@
 
      A: 65,
      Q: 81,
+     S: 83,
+     K: 75,
      O: 79,
      L: 76,
      SPC: 32,
@@ -165,8 +172,8 @@
 
  Game.reset = function() {
      this.players = [];
-     this.players.push(new Player(0.0, 'p1', Key.A, Key.Q));
-     this.players.push(new Player(180.0, 'p2', Key.O, Key.L));
+     this.players.push(new Player(0.0, 'p1', Key.A, Key.Q, Key.S));
+     this.players.push(new Player(180.0, 'p2', Key.O, Key.L, Key.K));
 
      this.foods = [];
      for(i=0; i < 10; i++) {
