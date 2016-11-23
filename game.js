@@ -48,7 +48,7 @@ var PLAYER_INIT_DIRECTION = 1; // Antitrigonometric
      this.flip_key = flip_key;
 
      this.update = function(){
-	 if (Key.isDown(this.flip_key) this.direction *= -1;
+	 if (Key.isDown(this.flip_key)) this.direction *= -1;
 	 
 	 if (this.size > PLAYER_INIT_SIZE) this.size += PLAYER_GROWING_SPEED;
 	 
