@@ -13,4 +13,4 @@ cd redis-stable
 make
 make install
 
-pip3 install -qr /innov/requirements.txt
+pip3 install -qUr /innov/requirements.txt
