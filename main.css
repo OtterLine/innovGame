@@ -69,18 +69,3 @@ body {
     width: 8px;
     background-color: #FF0000;
 }
-
-.scores {
-    bottom: -60px;
-    width: 100%;
-    text-align: center;
-    background-color: #CCCCCC ! important;
-
-}
-
-.scores > div {
-    display: inline-block;
-    width: 49%;
-    color: #10FF00;
-    font-size: 2em;
-}
