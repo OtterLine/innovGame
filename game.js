@@ -65,7 +65,8 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
     this.jumping_speed = PLAYER_JUMPING_SPEED;
     this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE;
 
-    this.size = this.div.clientHeight;
+    this.size = PLAYER_INIT_SIZE;
+    this.div.clientHeight = this.size;
 
     this.up_key = up_key;
     this.down_key = down_key;
@@ -269,8 +270,14 @@ Game.update = function () {
                 break
             }
         }
-        clearInterval(Game._intervalId);
-       // Game.reset();
+	var lenPlayer = this.players.length;
+	var lenFood = this.foods.length;
+	for (i = 0; i < lenFood ; i++) {
+	    this.foods[i].div.remove();
+	}
+	this.isOver = false;
+        //clearInterval(Game._intervalId);
+        Game.reset();
     }
 };
 
