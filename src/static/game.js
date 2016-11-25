@@ -282,9 +282,13 @@ Game.reset = function () {
     this.players.push(new Player(180.0, 'p2', commands_p2));
 
 
+    // Remove old listeners
+    window.addEventListener('keydown', this.listenerKeydown );
+    window.addEventListener('keydown', this.listenerKeyup );
+
     // Gather all players' action's commands and make one listener
     // Add keyboard listeners for Actions
-    window.addEventListener('keydown', function (event) {
+    this.listenerKeydown = function (event) {
 	for (var player of Game.players) {
 	    for (var action_name in player.a) {
 		var action = player.a[action_name];
@@ -294,8 +298,8 @@ Game.reset = function () {
 		}
 	    }
 	}
-    });
-    window.addEventListener('keyup', function (event) {
+    };
+    this.listenerKeyup = function (event) {
 	for (var player of Game.players) {
 	    for (var action_name in player.a) {
 		var action = player.a[action_name];
@@ -305,7 +309,9 @@ Game.reset = function () {
 		}
 	    }
 	}
-    });
+    }
+    window.addEventListener('keydown', this.listenerKeydown );
+    window.addEventListener('keyup', this.listenerKeyup);
     // Future listeners for Touch event
     
 
