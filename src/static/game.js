@@ -44,7 +44,7 @@ function randn_bimodal(mean_1, sigma_1, mean_2, sigma_2) {
 }
 
 
-function Player(init_angle, div_id, up_key, down_key, flip_key) {
+function Player(init_angle, div_id, commands) {
     this.div = document.getElementById(div_id);
     this.scoreDiv = document.getElementById("sco-" + div_id);
 
@@ -68,21 +68,26 @@ function Player(init_angle, div_id, up_key, down_key, flip_key) {
     this.size = PLAYER_INIT_SIZE;
     this.div.clientHeight = this.size;
 
-    this.up_key = up_key;
-    this.down_key = down_key;
-    this.flip_key = flip_key;
+    this.a = {};
+    for (var name in commands) {
+	this.a[name] = new Action(commands[name]);
+    }
 
     this.hasWon = false;
 
     this.update = function () {
-        if (Key.isDown_triggerOnce(this.flip_key)) this.direction *= -1;
+        if (this.a['flip'].getOnce())
+	    this.direction *= -1;
 
         if (this.size > PLAYER_INIT_SIZE) this.size += PLAYER_GROWING_SPEED;
 
-        if ((Key.isDown(this.up_key) || Key.isDown(this.down_key)) && !this.jumping) {
+        if ((this.a['jump_down'].get() || this.a['jump_up'].get()) && !this.jumping) {
             this.jumping = true;
-            if (Key.isDown(this.down_key))    this.jumping_amplitude = -PLAYER_JUMPING_AMPLITUDE/2;
-            else this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE/2;
+	    
+            if (this.a['jump_down'].get())
+		this.jumping_amplitude = -PLAYER_JUMPING_AMPLITUDE/2;
+            else
+		this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE/2;
         }
 
         if (this.jumping) {
@@ -193,36 +198,55 @@ function Food(container_div_id) {
     }
 }
 
-var Key = {
-    _pressed: {},
+function Action(commands) {
+    this.commands = commands;
+    
+    this.state = false;
+    this.holded = false;
+    
+    this.hold = function () {
+	if (!this.holded) {
+	    this.holded = true;
+	    this.state = true;
+	}
+    };
 
+    this.disable = function () {
+	this.holded = false;
+	this.state = false;
+    };
+
+    this.enable = function () {
+	this.state = true;
+    };
+
+    this.get = function () {
+	var actual_state = this.state;
+	if (!this.holded) {
+	    this.state = false;
+	}
+	return actual_state;
+    };
+
+    this.getOnce = function () {
+	var actual_state = this.state;
+	// Don't set holded to false in order to know we read once.
+	this.state = false;
+
+	return actual_state;
+    };
+}
+
+
+
+var Key = {
     A: 65,
     Q: 81,
     S: 83,
     K: 75,
     O: 79,
     L: 76,
-    SPC: 32,
-
-    isDown: function (keyCode) {
-        return this._pressed[keyCode];
-    },
-
-    isDown_triggerOnce: function (keyCode) {
-        if (this._pressed[keyCode]) {
-            delete this._pressed[keyCode];
-            return 1;
-        }
-        return 0;
-    },
-
-    onKeydown: function (event) {
-        this._pressed[event.keyCode] = true;
-    },
-
-    onKeyup: function (event) {
-        delete this._pressed[event.keyCode];
-    }
+    SPC: 32
 };
 
 Game.init = function () {
@@ -235,10 +259,57 @@ Game.init = function () {
 };
 
 Game.reset = function () {
-    this.players = [];
-    this.players.push(new Player(0.0, 'p1', Key.A, Key.Q, Key.S));
-    this.players.push(new Player(180.0, 'p2', Key.O, Key.L, Key.K));
 
+    // TODO : Customize this with a "commands" menu
+    var commands_p1 = {
+	"jump_up": {
+	    'keyboard' : [Key.A],
+	    'touchscreen' : [] // Future
+	},
+	"jump_down": {
+	    'keyboard' : [Key.Q],
+	    'touchscreen' : [] // Future
+	},
+	"flip": {
+	    'keyboard' : [Key.S],
+	    'touchscreen' : [] // Future
+	}
+    };
+    var commands_p2 = {	"jump_up": { 'keyboard' : [Key.O], 'touchscreen' : [] }, "jump_down": { 'keyboard' : [Key.L], 'touchscreen' : [] }, "flip": { 'keyboard' : [Key.K], 'touchscreen' : [] } };
+    
+    this.players = [];
+    this.players.push(new Player(0.0, 'p1', commands_p1));
+    this.players.push(new Player(180.0, 'p2', commands_p2));
+
+
+    // Gather all players' action's commands and make one listener
+    // Add keyboard listeners for Actions
+    window.addEventListener('keydown', function (event) {
+	for (var player of Game.players) {
+	    for (var action_name in player.a) {
+		var action = player.a[action_name];
+		for (var key of action.commands['keyboard']) {
+		    if(event.keyCode == key)
+			action.hold();		    
+		}
+	    }
+	}
+    });
+    window.addEventListener('keyup', function (event) {
+	for (var player of Game.players) {
+	    for (var action_name in player.a) {
+		var action = player.a[action_name];
+		for (var key of action.commands['keyboard']) {
+		    if(event.keyCode == key)
+			action.disable();		    
+		}
+	    }
+	}
+    });
+    // Future listeners for Touch event
+    
+
+    // Start some initial food
     this.foods = [];
     for (i = 0; i < 10; i++) {
         this.foods.push(new Food("container"));
@@ -292,13 +363,6 @@ Game.run = function () {
     Game.draw();
 };
 
-// Create keypress listeners
-window.addEventListener('keyup', function (event) {
-    Key.onKeyup(event);
-}, false);
-window.addEventListener('keydown', function (event) {
-    Key.onKeydown(event);
-}, false);
 
 // Start game
 Game.init();
