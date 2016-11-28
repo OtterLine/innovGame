@@ -1,3 +1,8 @@
+// Touch gestures
+var gameArea = document.getElementById('container');
+var hammertime = new Hammer(gameArea);
+hammertime.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+
 // Configuration :
 var PLAYER_INIT_SIZE = 10; // In PX
 var PLAYER_INIT_RADIUS = 200;
@@ -81,10 +86,12 @@ function Player(init_angle, div_id, commands) {
 
         if (this.size > PLAYER_INIT_SIZE) this.size += PLAYER_GROWING_SPEED;
 
-        if ((this.a['jump_down'].get() || this.a['jump_up'].get()) && !this.jumping) {
+	var jump_down = this.a['jump_down'].get();
+	var jump_up = this.a['jump_up'].get();
+        if ((jump_down  || jump_up) && !this.jumping) {
             this.jumping = true;
 	    
-            if (this.a['jump_down'].get())
+            if (jump_down)
 		this.jumping_amplitude = -PLAYER_JUMPING_AMPLITUDE/2;
             else
 		this.jumping_amplitude = PLAYER_JUMPING_AMPLITUDE/2;
@@ -310,6 +317,20 @@ Game.reset = function () {
 	    }
 	}
     }
+    hammertime.on('swiperight', function(ev) {
+	Game.players[0].a['flip'].enable();
+    });
+    hammertime.on('swipeleft', function(ev) {
+	Game.players[0].a['flip'].enable();
+    });
+    hammertime.on('swipeup', function(ev) {
+	Game.players[0].a['jump_up'].enable();
+    });
+    hammertime.on('swipedown', function(ev) {
+	console.log("SWIPEDOWN");
+	Game.players[0].a["jump_down"].enable();
+    });
+
     window.addEventListener('keydown', this.listenerKeydown );
     window.addEventListener('keyup', this.listenerKeyup);
     // Future listeners for Touch event
