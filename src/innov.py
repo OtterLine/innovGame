@@ -23,23 +23,23 @@ room_by_user = {}
 
 def party_manager(room_id):
     global parties
-    parties[room_id] = {"actions" : Queue(), "name":"1"}
+    parties[room_id] = {"actions" : Queue(), "name":0}
     _a = parties[room_id]["actions"]
     _id = room_id
 
     while True:
-        socketio.sleep(1)
+        time.sleep(1)
 
         # Get an action
-        action = _a.get()
-        if (action['type'] == 'join'):
-            print (action['uid'])
-
-        socketio.emit('Update', {'time': time.time()}, room=_id)
-
-        # Release the lock
-        _a.task_done()
-
+        try:
+            action = _a.get_nowait()
+            if (action['type'] == 'join'):
+                print (action['uid'])
+                _a.task_done() # Release the lock
+        except:
+            pass
+        
+        socketio.emit('update', {'time': time.time()}, room=_id)        
 
 @app.route('/')
 def hello_world():
