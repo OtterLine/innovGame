@@ -12,7 +12,7 @@ vagrant up
 vagrant ssh
 cd /innov
 export FLASK_APP=src/innov.py
-python3 -m flask run
+python3 -m flask run -h 0.0.0.0
 ```
 
 If you are using french locale, with locale forwarding by defautl enabled on open ssh server, it will mess up. Use this commands to sort it out :
