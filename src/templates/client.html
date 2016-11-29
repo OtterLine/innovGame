@@ -16,13 +16,13 @@
             socket.on('connect', function() {
                 socket.emit('looking_for_a_party', {data: 'I\'m connected!'});
             });
-
+	
             // Event handler for server sent data.
             // The callback function is invoked whenever the server emits data
             // to the client. The data is then displayed in the "Received"
             // section of the page.
-            socket.on('starting_party', function(msg) {
-                $('#log').append('<br>' + $('<div/>').text('Party found with ' + msg.adversary_name + ' angle :' + msg.starting_angle + ' data : ' + msg.other).html());
+            socket.on('party_found', function(msg) {
+                $('#log').append('<br>' + $('<div/>').text('Parties : ' + msg.parties).html());
             });
 
             // Interval function that tests message latency by sending a "ping"
