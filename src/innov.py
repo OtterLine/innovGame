@@ -21,9 +21,12 @@ parties = {}
 room_by_user = {}
 
 def party_manager(room_id):
-    parties[room_id] = {"actions" : Queue(), name:"1"}
+    global parties
+    parties[room_id] = {"actions" : Queue(), "name":"1"}
     _a = parties[room_id]["actions"]
     _id = room_id
+
+    print ('Pipi caca')
     
     while True:
         socketio.sleep(1)
@@ -41,38 +44,22 @@ def hello_world():
     return render_template('client.html')
 
 @socketio.on('connect')
-def connect(message):
+def connect():
     # Choose a UUID
     uid = str(uuid.uuid4())
     # Set it in session var
-    session['uid'] = uid
-    
-    join_room(parties[0]["name"])
-
+    session['uid'] = uid    
     
 @socketio.on('looking_for_a_party')
 def starting_a_party(message):
-    # # if (redis.get_queue("player_looking_for_a_party")) : 
-    # emit('starting_party', {'starting_angle': 0, 'adversary_name' : 'nimag42', 'other': str(message)})
-    # # else
-    # #    emit('wait_for_party', {})
-
-    # global parties
-    # if !parties:
-    #     parties.add(socketio.start_background_task(target=party_manager))
-    # else:
-    #     pass
-    # # Launch a thread for handling this party, or connect the user to the room if already existing
-    # # thread = PartyManager(user...)
-    # # or
-    # # Add "new user" event in Redis' thread's queue
     uid = session['uid']
 
     global room_by_user
     global parties
     
-    room_by_user[uid] = "1"
-    parties["1"]["actions"].append({"type":"join", "uid":uid})
+    join_room(parties[0]["name"])
+    room_by_user[uid] = 0
+    parties[0]["actions"].append({"type":"join", "uid":uid})
 
 @socketio.on('action')
 def player_action(message):
@@ -85,4 +72,6 @@ def player_action(message):
     
 
 if __name__ == '__main__':
+    party0 = Thread(target=party_manager, args=(0,) )
+    party0.start()
     socketio.run(app)
